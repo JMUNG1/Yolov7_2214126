@@ -1,10 +1,9 @@
-# Inference for ONNX model
-
 import cv2
-import tensorflow as tf
+import tensorflow.compat.v1 as tf  # TensorFlow 1.x를 사용하기 위해
+tf.disable_v2_behavior()  # TensorFlow 2.x의 행동 비활성화
+
 cuda = True
 w = "yolov7-tiny.onnx"
-#img = cv2.imread('horses.jpg')  # image-based execute!
 
 import time
 import requests
@@ -13,14 +12,13 @@ import numpy as np
 import onnxruntime as ort
 from PIL import Image
 from pathlib import Path
-from collections import OrderedDict,namedtuple
+from collections import OrderedDict, namedtuple
 
-providers = ['CUDAExecutionProvider', 'CPUExecutionProvider'] if cuda else ['CPUExecutionProvider'] #['AzureExecutionProvider', 'CPUExecutionProvider'] if cuda else ['CPUExecutionProvider']
+providers = ['CUDAExecutionProvider', 'CPUExecutionProvider'] if cuda else ['CPUExecutionProvider']
 session = ort.InferenceSession(w, providers=providers)
 
-tf.compat.disable_v2_behavior()
-with tf.compat.Session() as sess:
-    x = tf.compat.placeholder(tf.float32, [2])
+with tf.Session() as sess:  # TensorFlow 1.x의 세션 생성
+    x = tf.placeholder(tf.float32, [2])
     x2 = tf.square(x)
     print(sess.run(x2, feed_dict={x: [2, 3]}))
     # [4. 9.]
